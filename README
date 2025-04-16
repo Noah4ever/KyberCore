@@ -1,0 +1,34 @@
+# KyberCore ⚡🔦
+
+KyberCore is a high-performance, modular lightsaber firmware designed for ESP32. It supports sound, motion effects, Neopixel animation, and robust hardware modularity — all built with ultra-low latency in mind.
+
+## 🚀 Getting Started
+
+### ✅ Clone the repo **with submodules**:
+
+> ⚠️ This is important! Without `--recurse-submodules`, required libraries won’t be included.
+
+```bash
+git clone --recurse-submodules https://github.com/yourusername/KyberCore.git
+```
+
+Or if you already cloned without submodules:
+
+```
+cd KyberCore
+git submodule update --init --recursive
+```
+
+## 📦 Additions / Contributions
+
+If you're adding your own libraries inside lib/, please use either:
+
+- Git submodules (preferred for external dependencies)
+- Flat code (no .git/ folder inside) for static snapshots
+
+## 🧙 License
+
+KyberCore is licensed under the MIT License.
+
+Use it wisely, Padawan. Modify, build, and share — but honor the code.  
+Attribution is the path to the Light Side. ✨⚔️

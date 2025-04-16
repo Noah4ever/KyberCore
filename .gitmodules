@@ -1,0 +1,6 @@
+[submodule "lib/DFRobotDFPlayerMini"]
+	path = lib/DFRobotDFPlayerMini
+	url = https://github.com/DFRobot/DFRobotDFPlayerMini.git
+[submodule "lib/MPU9250_WE"]
+	path = lib/MPU9250_WE
+	url = https://github.com/wollewald/MPU9250_WE

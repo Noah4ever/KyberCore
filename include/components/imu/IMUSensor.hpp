@@ -1,15 +1,11 @@
 #pragma once
 
 #include "components/IComponent.hpp"
+#include "events/EventType.hpp"
 #include <ArduinoJson.h>
 
 class IMUSensor : public IComponent {
 public:
-    struct Vector3D {
-        float x;
-        float y;
-        float z;
-    };
 
     // Common IMU interface methods
     virtual Vector3D getOrientation() const = 0;       // Roll, Pitch, Yaw in degrees

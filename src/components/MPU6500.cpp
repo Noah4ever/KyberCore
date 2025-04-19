@@ -10,6 +10,7 @@
 #include "core/ComponentRegistry.hpp"
 #include "components/ComponentType.hpp"
 #include "core/ComponentRegistrar.hpp"
+#include "events/EventBus.hpp"
 
 #include <Wire.h>
 #include <cstdint>        // for uint8_t
@@ -44,11 +45,7 @@ MPU6500::MPU6500(const ArduinoJson::JsonObjectConst& config)
     const int     scl_pin  = config["i2c_scl"]     | 22;
 
     // Initialize I2C communication
-    #ifdef UNIT_TEST
-        Wire.begin();
-    #else
-        Wire.begin(sda_pin, scl_pin);
-    #endif
+    Wire.begin(sda_pin, scl_pin);
     // Initialize the sensor with the specified I2C address
     pimpl_ = std::make_unique<Impl>(i2c_addr);
 }
@@ -76,6 +73,7 @@ void MPU6500::setup()
 void MPU6500::update() {
     // Check for new data
     uint8_t status = pimpl_->sensor.readAndClearInterrupts();
+
     if (status == 0) {
         pimpl_->last_error = ErrorCode::NONE;
         return; // No new data
@@ -94,6 +92,27 @@ void MPU6500::update() {
             gyro.y  - pimpl_->gyro_offset.y,
             gyro.z  - pimpl_->gyro_offset.z
         };
+
+        // Publish IMU data event
+        Event imu_data(EventType::IMU_DATA_CHANGED, DataType::IMUDATA);
+        imu_data.imuData = { pimpl_->last_accel, pimpl_->last_gyro };
+        EventBus::getInstance().publish(imu_data);
+
+        Serial.print("Accel: ");
+        Serial.print(pimpl_->last_accel.x);
+        Serial.print(", ");
+        Serial.print(pimpl_->last_accel.y);
+        Serial.print(", ");
+        Serial.print(pimpl_->last_accel.z);
+        Serial.print(" | Gyro: ");
+        Serial.print(pimpl_->last_gyro.x);
+        Serial.print(", ");
+        Serial.print(pimpl_->last_gyro.y);
+        Serial.print(", ");
+        Serial.print(pimpl_->last_gyro.z);
+        Serial.println();
+
+
     }
 }
 
@@ -125,18 +144,18 @@ bool MPU6500::isCalibrated() const
             pimpl_->gyro_offset.z  != 0.0f);
 }
 
-MPU6500::Vector3D MPU6500::getOrientation() const
+Vector3D MPU6500::getOrientation() const
 {
     // Placeholder for orientation calculation
     return {0,0,0};
 }
 
-MPU6500::Vector3D MPU6500::getAcceleration() const
+Vector3D MPU6500::getAcceleration() const
 {
     return pimpl_->last_accel;
 }
 
-MPU6500::Vector3D MPU6500::getGyroscope() const
+Vector3D MPU6500::getGyroscope() const
 {
     return pimpl_->last_gyro;
 }

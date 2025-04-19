@@ -6,12 +6,18 @@
 #include "core/ComponentFactory.hpp"
 #include "components/ComponentType.hpp"
 
+#include "core/SettingsStateMachine.hpp"
+#include "states/BrightnessState.hpp"
+#include "states/VolumeState.hpp"
 
 std::map<ComponentType, IComponent*> components;
 
+SettingsStateMachine* settingsStateMachine = new SettingsStateMachine();
 
 void setup()
 {
+  Serial.begin(115200);
+
   ComponentFactory factory;
 
   // Could be read from a config file or JSON
@@ -29,10 +35,19 @@ void setup()
       Serial.println("Failed to create component");
     }
   }
+
+  // Setup the settings state machine
+  settingsStateMachine->setup();
+  settingsStateMachine->addState(new BrightnessState());
+  settingsStateMachine->addState(new VolumeState());
+
+
+
 }
 
 void loop()
 {
+  Serial.println("Main loop running...");
   
   // Update all components
   for (auto& component : components) {
@@ -41,5 +56,5 @@ void loop()
     }
   }
 
-  delay(20); // Adjust the delay as needed
+  delay(200); // Adjust the delay as needed
 }

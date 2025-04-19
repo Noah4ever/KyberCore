@@ -1,0 +1,9 @@
+#pragma once
+
+enum ComponentType
+{
+    COMPONENT_TYPE_NONE = 0,
+    COMPONENT_TYPE_ROTARY_ENCODER,
+    COMPONENT_TYPE_SPEAKER,
+    IMU_MPU6500,
+};

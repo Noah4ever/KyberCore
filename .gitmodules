@@ -4,3 +4,6 @@
 [submodule "lib/MPU9250_WE"]
 	path = lib/MPU9250_WE
 	url = https://github.com/wollewald/MPU9250_WE
+[submodule "lib/ArduinoJson"]
+	path = lib/ArduinoJson
+	url = https://github.com/bblanchon/ArduinoJson

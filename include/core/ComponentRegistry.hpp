@@ -19,9 +19,20 @@ public:
     }
 
     // Register a creation function for a specific component type
-    void registerCreator(ComponentType type, Creator creator) {
-        creators_[type] = creator; // Store in hash map
+    void registerCreator(ComponentType type, const std::string& typeStr, Creator creator) {
+        creators_[type] = creator;
+        typeStringToEnum_[typeStr] = type;
     }
+
+    // Get component type from string
+    ComponentType getComponentType(const std::string& typeStr) const {
+        auto it = typeStringToEnum_.find(typeStr);
+        if (it != typeStringToEnum_.end()) {
+            return it->second;
+        }
+        return ComponentType::UNKNOWN; 
+    }
+    
 
     // Create component instance using registered creator
     IComponent* create(ComponentType type, const ArduinoJson::JsonObjectConst& config) {
@@ -31,5 +42,7 @@ public:
 
 private:
     std::unordered_map<ComponentType, Creator> creators_;
+    std::unordered_map<std::string, ComponentType> typeStringToEnum_;
+
     ComponentRegistry() = default; // Prevent direct instantiation
 };

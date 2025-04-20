@@ -1,6 +1,6 @@
 
 #include "states/VolumeState.hpp"
-
+#include "Arduino.h" // For Serial print
 #include <cmath> 
 
 VolumeState::VolumeState() : volumeLevel(DEFAULT_VOLUME) {}
@@ -9,6 +9,9 @@ void VolumeState::handleRotation(int delta) {
     volumeLevel += delta * ROTATION_STEP;
     volumeLevel = std::fmax(MIN_VOLUME, std::fmin(MAX_VOLUME, volumeLevel));
 
+    Serial.print("Volume Level: ");
+    Serial.println(volumeLevel);
+    
     // Update the display with the new volume level
     // publish an event to event bus 
 }

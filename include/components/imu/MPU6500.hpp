@@ -12,14 +12,15 @@
 
 #pragma once
 
+#include "components/imu/IMUSensor.hpp" 
+
 #include <ArduinoJson.h>
 #include <memory>
-#include "components/imu/IMUSensor.hpp" 
 
 class MPU6500 : public IMUSensor {
 public:
-    explicit MPU6500(const ArduinoJson::JsonObjectConst& config);
-    ~MPU6500();
+     MPU6500(const ArduinoJson::JsonObjectConst& config);
+    ~MPU6500() override; // Destructor
 
     // Interface implementations
     void setup() override;

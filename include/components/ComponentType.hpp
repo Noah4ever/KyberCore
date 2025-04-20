@@ -1,9 +1,18 @@
 #pragma once
 
+enum MainComponentType
+{
+    MAIN_COMPONENT_TYPE_NONE = 0,
+    BLADE,
+    IMU,
+    ROTARY_ENCODER,
+};
+
 enum ComponentType
 {
-    COMPONENT_TYPE_NONE = 0,
-    COMPONENT_TYPE_ROTARY_ENCODER,
-    COMPONENT_TYPE_SPEAKER,
+    UNKNOWN = 0,
+    ROTARY_ENCODER_GENERIC,
     IMU_MPU6500,
+    BLADE_NEOPIXEL,
+    BLADE_SINGLE_LED,
 };

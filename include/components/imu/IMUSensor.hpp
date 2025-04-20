@@ -38,6 +38,8 @@ public:
 protected:
     // Protected constructor to enforce abstract base class
     IMUSensor() = default;
+    // Destructor
+    virtual ~IMUSensor() = default;
 
 private:
     // Prevent copying

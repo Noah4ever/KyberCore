@@ -10,9 +10,12 @@
 
 class ComponentFactory {
     public:
-        virtual IComponent* create(ComponentType type,
-            const ArduinoJson::JsonObjectConst& config) {
+        IComponent* create(const std::string& typeStr, const ArduinoJson::JsonObjectConst& config) {
+            ComponentType type = ComponentRegistry::instance().getComponentType(typeStr);
+            if (type == ComponentType::UNKNOWN) {
+                return nullptr;
+            }
             return ComponentRegistry::instance().create(type, config);
         }
+    };
     
-};

@@ -3,6 +3,8 @@
 #include "events/EventBus.hpp"
 #include "components/display/Display.hpp" 
 
+#include "Arduino.h" // Serial print
+
 SettingsStateMachine::SettingsStateMachine() : currentStateIndex(0) {}
 
 SettingsStateMachine::~SettingsStateMachine() {
@@ -14,6 +16,7 @@ SettingsStateMachine::~SettingsStateMachine() {
 
 void SettingsStateMachine::setup() {
     EventBus::getInstance().subscribe(this, EventType::ROTARY_BUTTON_PRESSED);
+    EventBus::getInstance().subscribe(this, EventType::ROTARY_BUTTON_RELEASED);
     EventBus::getInstance().subscribe(this, EventType::ROTARY_ROTATION_CHANGED);
 }
 
@@ -30,6 +33,8 @@ void SettingsStateMachine::handleRotation(int delta) {
 void SettingsStateMachine::handleButtonPress() {
     if (!states.empty()) {
         currentStateIndex = (currentStateIndex + 1) % states.size();
+        Serial.print("Switching to state: ");
+        Serial.println(currentStateIndex);
     }
 }
 
@@ -49,8 +54,10 @@ void SettingsStateMachine::handleEvent(const Event& event) {
             }
             break;
         case EventType::ROTARY_BUTTON_PRESSED:
-            handleButtonPress();
+            // handleButtonPress();
             break;
+        case EventType::ROTARY_BUTTON_RELEASED:
+            handleButtonPress();
         default:
             break;
     }

@@ -40,9 +40,9 @@ MPU6500::~MPU6500() = default; // Must appear AFTER Impl definition
 MPU6500::MPU6500(const ArduinoJson::JsonObjectConst& config)
 {
     // Get data from config
-    const uint8_t i2c_addr = config["i2c_address"] | 0x68;
-    const int     sda_pin  = config["i2c_sda"]     | 21;
-    const int     scl_pin  = config["i2c_scl"]     | 22;
+    const uint8_t i2c_addr = config["imu"]["i2c_address"] | 0x68;
+    const int     sda_pin  = config["imu"]["i2c_sda"]     | 21;
+    const int     scl_pin  = config["imu"]["i2c_scl"]     | 22;
 
     // Initialize I2C communication
     Wire.begin(sda_pin, scl_pin);
@@ -98,19 +98,19 @@ void MPU6500::update() {
         imu_data.imuData = { pimpl_->last_accel, pimpl_->last_gyro };
         EventBus::getInstance().publish(imu_data);
 
-        Serial.print("Accel: ");
-        Serial.print(pimpl_->last_accel.x);
-        Serial.print(", ");
-        Serial.print(pimpl_->last_accel.y);
-        Serial.print(", ");
-        Serial.print(pimpl_->last_accel.z);
-        Serial.print(" | Gyro: ");
-        Serial.print(pimpl_->last_gyro.x);
-        Serial.print(", ");
-        Serial.print(pimpl_->last_gyro.y);
-        Serial.print(", ");
-        Serial.print(pimpl_->last_gyro.z);
-        Serial.println();
+        // Serial.print("Accel: ");
+        // Serial.print(pimpl_->last_accel.x);
+        // Serial.print(", ");
+        // Serial.print(pimpl_->last_accel.y);
+        // Serial.print(", ");
+        // Serial.print(pimpl_->last_accel.z);
+        // Serial.print(" | Gyro: ");
+        // Serial.print(pimpl_->last_gyro.x);
+        // Serial.print(", ");
+        // Serial.print(pimpl_->last_gyro.y);
+        // Serial.print(", ");
+        // Serial.print(pimpl_->last_gyro.z);
+        // Serial.println();
 
 
     }
@@ -178,9 +178,8 @@ IMUSensor::ErrorCode MPU6500::getLastError() const
     return pimpl_->last_error;
 }
 
-// Component registration
-static ComponentRegistrar<ComponentType::IMU_MPU6500> registrar{
-    [](const ArduinoJson::JsonObjectConst& cfg) -> IComponent* {
-      return new MPU6500(cfg);
+static ComponentRegistrar<ComponentType::IMU_MPU6500> registrar("mpu6500",
+    [](const ArduinoJson::JsonObjectConst& config) -> IComponent* {
+        return new MPU6500(config);
     }
-};
+);

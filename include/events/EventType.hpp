@@ -8,6 +8,10 @@ enum class EventType {
     ANIMATION_REQUESTED,
     ROTARY_ROTATION_CHANGED,
     ROTARY_BUTTON_PRESSED,
+    ROTARY_BUTTON_LONG_PRESSED,
+    ROTARY_BUTTON_DOUBLE_CLICKED,
+    ROTARY_BUTTON_CLICKED,
+    ROTARY_BUTTON_RELEASED,
 
 };
 
@@ -36,7 +40,8 @@ struct BoolData {
 };
 
 struct StringData {
-    std::string value; // Can lead to memory issues if not managed properly because of deconstructor i think TODO: Fix
+    char value[256]; // Changed from std::string to char array to avoid memory issues
+    
 };
 
 struct VolumeData {

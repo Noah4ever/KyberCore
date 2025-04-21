@@ -16,6 +16,7 @@ public:
 
     void handleRotation(int delta) override;
     void handleButtonPress() override;
+    void update() override;
     void updateDisplay(IDisplay* display) override;
     void resetState() override;
 };

@@ -18,6 +18,11 @@ public:
     virtual void handleButtonPress() = 0;
 
     /**
+     * @brief Lets a settings state update itself when its selected.
+     */
+    virtual void update() = 0;
+
+    /**
      * @brief Updates the display with the current state information.
      *
      * @param display The display object to be updated.

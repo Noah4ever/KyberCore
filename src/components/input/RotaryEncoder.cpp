@@ -39,7 +39,6 @@ void RotaryEncoder::readEncoder() {
         }
 
         rotaryEvent.intData.value = encoderPos;
-
         EventBus::getInstance().publish(rotaryEvent);
 
         lastRotaryTime = millis();
@@ -57,15 +56,14 @@ void RotaryEncoder::readButton() {
         lastButtonTime = now;
 
         if (cur == LOW) {
-            // → BUTTON DOWN
+            // Button down
             pressTime = now;
             EventBus::getInstance().publish(
               Event{EventType::ROTARY_BUTTON_PRESSED, DataType::NONE}
             );
-            Serial.println("Button Pressed");
         } 
         else {
-            // → BUTTON UP
+            // Button up
             unsigned long held = now - pressTime;
             auto& bus = EventBus::getInstance();
 
@@ -89,7 +87,6 @@ void RotaryEncoder::readButton() {
 
             // Always publish RELEASED
             bus.publish(Event{EventType::ROTARY_BUTTON_RELEASED, DataType::NONE});
-            Serial.println("Button Released");
         }
     }
 

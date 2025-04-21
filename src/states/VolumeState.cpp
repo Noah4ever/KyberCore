@@ -1,5 +1,7 @@
 
 #include "states/VolumeState.hpp"
+#include "events/EventBus.hpp"
+#include "events/EventType.hpp"
 #include "Arduino.h" // For Serial print
 #include <cmath> 
 
@@ -9,15 +11,25 @@ void VolumeState::handleRotation(int delta) {
     volumeLevel += delta * ROTATION_STEP;
     volumeLevel = std::fmax(MIN_VOLUME, std::fmin(MAX_VOLUME, volumeLevel));
 
+    Event volumeEvent(EventType::VOLUME_CHANGED, DataType::INT);
+    volumeEvent.intData.value = volumeLevel;
+    EventBus::getInstance().publish(volumeEvent);
+
+    Event igniteEvent(EventType::BLADE_IGNITE, DataType::JSON_OBJECT);
+    igniteEvent.jsonData = ArduinoJson::JsonObject();
+    EventBus::getInstance().publish(igniteEvent);
+
     Serial.print("Volume Level: ");
     Serial.println(volumeLevel);
     
-    // Update the display with the new volume level
-    // publish an event to event bus 
 }
 
 void VolumeState::handleButtonPress() {
     
+}
+
+void VolumeState::update() {
+    // Update logic if needed
 }
 
 void VolumeState::updateDisplay(IDisplay* display) {

@@ -2,10 +2,17 @@
 
 enum class EventType {
     NONE,
+
     IMU_DATA_CHANGED,
+
+    BRIGHTNESS_CHANGED,
+
     VOLUME_CHANGED,
+
     COLOR_CHANGED,
-    ANIMATION_REQUESTED,
+
+    ANIMATION_REQUESTED, // maybe dont need this
+
     ROTARY_ROTATION_CHANGED,
     ROTARY_BUTTON_PRESSED,
     ROTARY_BUTTON_LONG_PRESSED,
@@ -13,6 +20,10 @@ enum class EventType {
     ROTARY_BUTTON_CLICKED,
     ROTARY_BUTTON_RELEASED,
 
+    BLADE_IGNITE,
+    BLADE_EXTINGUISH,
+    BLADE_BLASTER_REFLECT,
+    BLADE_BLADE_LOCK,
 };
 
 enum class DataType {
@@ -25,6 +36,7 @@ enum class DataType {
     COLOR_VALUE,
     VECTOR3D,
     IMUDATA,
+    JSON_OBJECT,
 };
     
 struct IntData {

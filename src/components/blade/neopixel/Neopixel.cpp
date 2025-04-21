@@ -1,5 +1,7 @@
 #include "components/blade/neopixel/Neopixel.hpp"
 #include "core/ComponentRegistrar.hpp"
+#include <components/blade/neopixel/animations/NeopixelIgniteAnimation.hpp>
+#include "events/EventBus.hpp"
 
 #include <Arduino.h>
 #include <FastLED.h>
@@ -10,6 +12,8 @@ Neopixel::Neopixel(const ArduinoJson::JsonObjectConst& config)
     , brightness(config["neopixel"]["brightness"] | 80)
     {
     leds = new CRGB[numLeds];
+
+    addAnimation(EventType::BLADE_IGNITE, std::make_unique<NeopixelIgniteAnimation>());
 }
 
 Neopixel::~Neopixel()  {
@@ -20,13 +24,23 @@ Neopixel::~Neopixel()  {
 
 void Neopixel::setup()  {
 
-    FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, numLeds);
+    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, numLeds);
     FastLED.setBrightness(brightness);
     FastLED.clear();
     FastLED.show();
+
+    EventBus::getInstance().subscribe(this, EventType::COLOR_CHANGED);
+    EventBus::getInstance().subscribe(this, EventType::BRIGHTNESS_CHANGED);
+
+    EventBus::getInstance().subscribe(this, EventType::BLADE_IGNITE);
+    EventBus::getInstance().subscribe(this, EventType::BLADE_EXTINGUISH);
+    EventBus::getInstance().subscribe(this, EventType::BLADE_BLASTER_REFLECT);
 }
 
 void Neopixel::update()  {
+
+    IBlade::updateAnimation();
+
     // This is just test to see if the LEDs are working
     // Animations should be handled in a separate class
     static unsigned long lastUpdateTime = 0;
@@ -53,21 +67,25 @@ int Neopixel::getNumLeds() const  {
     return numLeds;
 }
 
-void Neopixel::setColor(CRGB color)  {
+void Neopixel::setColor(ColorData color)  {
+    this->color = color;
     for (int i = 0; i < numLeds; i++) {
-        leds[i] = color;
+        leds[i] = CRGB(color.red, color.green, color.blue);
     }
+    FastLED.show();
 }
 
 void Neopixel::setPixelColor(int pixel, CRGB color) {
     if (pixel >= 0 && pixel < numLeds) {
         leds[pixel] = color;
     }
+
 }
 
 void Neopixel::setBrightness(int brightness)  {
-    FastLED.setBrightness(brightness);
     this->brightness = brightness;
+    FastLED.setBrightness(brightness);
+    FastLED.show();
 }
 
 void Neopixel::show()  {

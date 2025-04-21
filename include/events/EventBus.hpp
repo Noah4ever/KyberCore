@@ -1,10 +1,11 @@
 #pragma once
 
+#include "events/EventType.hpp"
+
 #include <map>
 #include <vector>
 #include <functional> // For std::function 
-
-#include "events/EventType.hpp"
+#include <ArduinoJson.h>
 
 class IEventListener;
 
@@ -24,6 +25,7 @@ struct Event {
         ColorData colorData;
         Vector3D vector3DData;
         IMUData imuData;
+        ArduinoJson::JsonVariant jsonData;
         // Add more data types as needed
     };
 };

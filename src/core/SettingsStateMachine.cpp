@@ -15,8 +15,7 @@ SettingsStateMachine::~SettingsStateMachine() {
 }
 
 void SettingsStateMachine::setup() {
-    EventBus::getInstance().subscribe(this, EventType::ROTARY_BUTTON_PRESSED);
-    EventBus::getInstance().subscribe(this, EventType::ROTARY_BUTTON_RELEASED);
+    EventBus::getInstance().subscribe(this, EventType::ROTARY_BUTTON_CLICKED);
     EventBus::getInstance().subscribe(this, EventType::ROTARY_ROTATION_CHANGED);
 }
 
@@ -53,10 +52,7 @@ void SettingsStateMachine::handleEvent(const Event& event) {
                 handleRotation(delta);
             }
             break;
-        case EventType::ROTARY_BUTTON_PRESSED:
-            // handleButtonPress();
-            break;
-        case EventType::ROTARY_BUTTON_RELEASED:
+        case EventType::ROTARY_BUTTON_CLICKED:
             handleButtonPress();
         default:
             break;

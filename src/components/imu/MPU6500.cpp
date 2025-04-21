@@ -40,7 +40,7 @@ MPU6500::~MPU6500() = default; // Must appear AFTER Impl definition
 MPU6500::MPU6500(const ArduinoJson::JsonObjectConst& config)
 {
     // Get data from config
-    const uint8_t i2c_addr = config["imu"]["i2c_address"] | 0x68;
+    const uint8_t i2c_addr = 0x68;
     const int     sda_pin  = config["imu"]["i2c_sda"]     | 21;
     const int     scl_pin  = config["imu"]["i2c_scl"]     | 22;
 

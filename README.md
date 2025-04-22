@@ -40,7 +40,7 @@ lib_deps =
 For more details on specifying dependencies, refer to the PlatformIO lib_deps documentation.
 
 ## UML-Diagram
-![KyberCore excalidraw](https://github.com/user-attachments/assets/f7a6de37-62bb-43af-ad9c-f6093ef00872)
+![x2KyberCore excalidraw](https://github.com/user-attachments/assets/3097ffd6-ad48-4b42-a3d0-22ba7b7f18c2)
 
 ## 🧙 License
 

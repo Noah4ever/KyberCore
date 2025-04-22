@@ -1,0 +1,36 @@
+name: PlatformIO Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install PlatformIO Core
+        uses: platformio/action-install@v2
+
+      - name: Cache PlatformIO dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.platformio
+            # Also cache project-specific dependencies if stored in project
+            .pio
+          key: ${{ runner.os }}-platformio-${{ hashFiles('**/platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-platformio-
+
+      - name: Build project
+        run: platformio run
+
+      # Uncomment the following lines if I finnaly test the code
+      # - name: Run Unit Tests
+      #   run: platformio test

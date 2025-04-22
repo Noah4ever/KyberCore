@@ -11,26 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install PlatformIO Core
-        uses: platformio/action-install@v2
-
-      - name: Cache PlatformIO dependencies
-        uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: |
-            ~/.platformio
-            # Also cache project-specific dependencies if stored in project
-            .pio
-          key: ${{ runner.os }}-platformio-${{ hashFiles('**/platformio.ini') }}
-          restore-keys: |
-            ${{ runner.os }}-platformio-
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
 
-      - name: Build project
-        run: platformio run
-
-      # Uncomment the following lines if I finnaly test the code
-      # - name: Run Unit Tests
-      #   run: platformio test
+      - name: Build PlatformIO Project
+        run: pio run

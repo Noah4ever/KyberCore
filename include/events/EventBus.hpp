@@ -21,12 +21,12 @@ struct Event {
         FloatData floatData;
         BoolData boolData;
         StringData stringData;
-        VolumeData volumeData;
         ColorData colorData;
         Vector3D vector3DData;
         IMUData imuData;
         ArduinoJson::JsonVariant jsonData;
-        // Add more data types as needed
+        DisplayUIData displayUIData;
+        // Add more data types as needed. EventType.hpp
     };
 };
 

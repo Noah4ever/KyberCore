@@ -70,9 +70,9 @@ void ColorState::handleButtonPress()
     
 }
 
-void ColorState::updateDisplay(IDisplay *display) 
+void ColorState::updateDisplayData() 
 {
-   // Update display
+    
 }
 
 void ColorState::resetState() 

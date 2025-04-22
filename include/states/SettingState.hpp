@@ -1,6 +1,6 @@
 #pragma once
 
-#include "components/display/Display.hpp"
+#include "components/display/IDisplay.hpp"
 
 class SettingState{
 public: 
@@ -25,9 +25,8 @@ public:
     /**
      * @brief Updates the display with the current state information.
      *
-     * @param display The display object to be updated.
      */
-    virtual void updateDisplay(IDisplay* display) = 0;
+    virtual void updateDisplayData() = 0;
 
     /**
      * @brief Resets the state of the setting.

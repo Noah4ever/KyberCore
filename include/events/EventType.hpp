@@ -1,5 +1,10 @@
 #pragma once
 
+#include "ui/UIBuilder.hpp"
+
+#include <cstdint>
+#include <vector>
+
 enum class EventType {
     NONE,
 
@@ -10,6 +15,19 @@ enum class EventType {
     VOLUME_CHANGED,
 
     COLOR_CHANGED,
+
+    DISPLAY_CLEAR_REQUESTED,
+    DISPLAY_TEXT_REQUESTED,
+    DISPLAY_PROGRESS_REQUESTED,
+    DISPLAY_ICON_REQUESTED,
+    DISPLAY_UI_REQUESTED,
+
+    AUDIO_PLAY_TRACK,
+    AUDIO_PAUSE,
+    AUDIO_STOP,
+    AUDIO_SET_VOLUME,
+    AUDIO_NEXT,
+    AUDIO_PREVIOUS,
 
     ANIMATION_REQUESTED, // maybe dont need this
 
@@ -32,11 +50,11 @@ enum class DataType {
     FLOAT,
     BOOL,
     STRING,
-    VOLUME_LEVEL, 
     COLOR_VALUE,
     VECTOR3D,
     IMUDATA,
     JSON_OBJECT,
+    DISPLAY_UI_DATA,
 };
     
 struct IntData {
@@ -56,10 +74,6 @@ struct StringData {
     
 };
 
-struct VolumeData {
-    float level;
-};
-
 struct ColorData {
     int red;
     int green;
@@ -75,4 +89,8 @@ struct Vector3D {
 struct IMUData {
     Vector3D accel;
     Vector3D gyro;
+};
+
+struct DisplayUIData {
+    std::vector<UIElement> elements;
 };

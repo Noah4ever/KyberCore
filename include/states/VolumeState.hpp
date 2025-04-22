@@ -1,7 +1,7 @@
 #pragma once
 
 #include "states/SettingState.hpp"
-#include "components/display/Display.hpp"
+#include "components/display/IDisplay.hpp"
 
 class VolumeState : public SettingState {
 private:
@@ -17,7 +17,12 @@ public:
     void handleRotation(int delta) override;
     void handleButtonPress() override;
     void update() override;
-    void updateDisplay(IDisplay* display) override;
+    void updateDisplayData() override;
     void resetState() override;
+
+    // Static members for the volume icon
+    static const uint8_t icon_volume[];
+    static const int ICON_VOLUME_WIDTH = 32;
+    static const int ICON_VOLUME_HEIGHT = 32;
 };
 

@@ -1,7 +1,7 @@
 #include "core/SettingsStateMachine.hpp"
 #include "states/SettingState.hpp"
 #include "events/EventBus.hpp"
-#include "components/display/Display.hpp" 
+#include "components/display/IDisplay.hpp" 
 
 #include "Arduino.h" // Serial print
 
@@ -34,6 +34,7 @@ void SettingsStateMachine::handleButtonPress() {
         currentStateIndex = (currentStateIndex + 1) % states.size();
         Serial.print("Switching to state: ");
         Serial.println(currentStateIndex);
+        states[currentStateIndex]->updateDisplayData();
     }
 }
 

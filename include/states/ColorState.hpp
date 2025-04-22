@@ -1,7 +1,7 @@
 #pragma once
 
 #include "states/SettingState.hpp"
-#include "components/display/Display.hpp"
+#include "components/display/IDisplay.hpp"
 #include "events/EventType.hpp"
 
 class ColorState : public SettingState
@@ -63,6 +63,6 @@ public:
     void handleRotation(int delta) override;
     void handleButtonPress() override;
     void update() override;
-    void updateDisplay(IDisplay *display) override;
+    void updateDisplayData() override;
     void resetState() override;
 };

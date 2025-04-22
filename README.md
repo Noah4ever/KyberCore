@@ -34,7 +34,7 @@ For example, to include a library from a GitHub repository:
 
 ```bash
 lib_deps =
-  https://github.com/username/custom-library.git
+  username/custom-library
 ```
 
 For more details on specifying dependencies, refer to the PlatformIO lib_deps documentation.

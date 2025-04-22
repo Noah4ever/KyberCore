@@ -39,6 +39,9 @@ lib_deps =
 
 For more details on specifying dependencies, refer to the PlatformIO lib_deps documentation.
 
+## UML-Diagram
+![KyberCore excalidraw](https://github.com/user-attachments/assets/f7a6de37-62bb-43af-ad9c-f6093ef00872)
+
 ## 🧙 License
 
 KyberCore is licensed under the Apache License 2.0.

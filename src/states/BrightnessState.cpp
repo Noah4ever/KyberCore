@@ -2,9 +2,21 @@
 #include "events/EventBus.hpp"
 #include "events/EventType.hpp"
 #include "Arduino.h"
+#include "ui/elements/DefaultSettingView.hpp"
+#include "ui/elements/MenuList.hpp"
+
 #include <cmath>
 
-BrightnessState::BrightnessState() : brightnessLevel(DEFAULT_BRIGHTNESS), targetBrightnessLevel(DEFAULT_BRIGHTNESS), startBrightnessLevel(DEFAULT_BRIGHTNESS), animationProgress(1.0f), isAnimating(false) {}
+BrightnessState::BrightnessState() : brightnessLevel(DEFAULT_BRIGHTNESS), targetBrightnessLevel(DEFAULT_BRIGHTNESS), startBrightnessLevel(DEFAULT_BRIGHTNESS), animationProgress(1.0f), isAnimating(false) {
+    defaultUI = new DefaultSettingView("Brightness");
+    progressBar = new ProgressBar(brightnessLevel, MIN_BRIGHTNESS, MAX_BRIGHTNESS, 120, 10);
+    progressBar->setValue(brightnessLevel);
+    progressBar->x = 4;
+    progressBar->y = 18;
+    defaultUI->addChild(progressBar);
+
+    menuUI = new MenuList();
+}
 
 void BrightnessState::handleRotation(int delta) {
     if (!isAnimating) {
@@ -13,11 +25,12 @@ void BrightnessState::handleRotation(int delta) {
         targetBrightnessLevel = std::fmax(MIN_BRIGHTNESS, std::fmin(MAX_BRIGHTNESS, targetBrightnessLevel));
         animationProgress = 0.0f;
         isAnimating = true;
-        updateDisplayData(); // Update display immediately on rotation
+
+        Event requestUI(EventType::DISPLAY_REQUEST_UPDATE, DataType::NONE);
+        EventBus::getInstance().publish(requestUI);
     } else {
         targetBrightnessLevel += delta * ROTATION_STEP;
         targetBrightnessLevel = std::fmax(MIN_BRIGHTNESS, std::fmin(MAX_BRIGHTNESS, targetBrightnessLevel));
-        updateDisplayData(); // Update display during ongoing rotation
     }
 }
 
@@ -32,16 +45,13 @@ void BrightnessState::update() {
             animationProgress = 1.0f;
             isAnimating = false;
             brightnessLevel = targetBrightnessLevel;
-            Event brightnessEvent(EventType::BRIGHTNESS_CHANGED, DataType::INT);
-            brightnessEvent.intData.value = brightnessLevel;
-            EventBus::getInstance().publish(brightnessEvent);
-            updateDisplayData(); // Final display update after animation
+            publishBrightnessEvent();
+            
+            Event requestUI(EventType::DISPLAY_REQUEST_UPDATE, DataType::NONE);
+            EventBus::getInstance().publish(requestUI);
         } else {
             brightnessLevel = lerpBrightness(startBrightnessLevel, targetBrightnessLevel, animationProgress);
-            Event brightnessEvent(EventType::BRIGHTNESS_CHANGED, DataType::INT);
-            brightnessEvent.intData.value = brightnessLevel;
-            EventBus::getInstance().publish(brightnessEvent);
-            updateDisplayData(); // Update display during animation
+            publishBrightnessEvent();
         }
     }
 }
@@ -56,12 +66,23 @@ void BrightnessState::resetState() {
     startBrightnessLevel = DEFAULT_BRIGHTNESS;
     animationProgress = 1.0f;
     isAnimating = false;
-    updateDisplayData(); // Ensure display reflects the reset state
 }
 
-void BrightnessState::updateDisplayData() {
-    
-    // EventBus::getInstance().publish(ui);
+void BrightnessState::updateDisplay(IDisplay *display) {
+    if (display) {
+        progressBar->setValue(brightnessLevel);
+        progressBar->clear(*display); // Only clears when new value is lower than the previous one
+        progressBar->draw(*display);
+        display->displayInternal();
+    }
+}
+
+UIElement* BrightnessState::getDefaultUI() {
+    return defaultUI;
+}
+
+UIElement* BrightnessState::getMenuUI() {
+    return menuUI;
 }
 
 const uint8_t BrightnessState::icon_brightness[] PROGMEM = {

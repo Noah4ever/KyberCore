@@ -5,6 +5,7 @@
 #include "events/EventType.hpp"
 #include "events/IEventListener.hpp"
 #include "components/blade/animations/IAnimation.hpp"  
+#include "states/ColorState.hpp"
 
 #include <ArduinoJson.h>
 #include <memory>
@@ -20,9 +21,10 @@ class IBlade : public IComponent, public IEventListener
     virtual void setup() = 0;
     virtual void show() = 0;
 
-    virtual void setColor(ColorData color) = 0;
+    virtual void setInitColor(ColorData color) = 0;
+    virtual void setColor(ColorData color, bool force = false) = 0;
     virtual ColorData getColor() const = 0;
-    virtual void setBrightness(int brightness) = 0;
+    virtual void setBrightness(int brightness, bool force = false) = 0;
 
     virtual BladeType getType() const = 0;
     virtual void playAnimation(EventType animationType, const ArduinoJson::JsonObjectConst& config = ArduinoJson::JsonObjectConst());
@@ -33,6 +35,7 @@ class IBlade : public IComponent, public IEventListener
     virtual void handleEvent(const Event& event) override;
 
 protected:
+    bool bladeIsIgnited = false;
     std::map<EventType, std::unique_ptr<IAnimation>> animations;
     IAnimation* currentAnimation = nullptr;
     ArduinoJson::JsonObjectConst currentAnimationConfig;

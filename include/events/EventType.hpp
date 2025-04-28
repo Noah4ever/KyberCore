@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ui/UIBuilder.hpp"
-
 #include <cstdint>
 #include <vector>
 
 enum class EventType {
     NONE,
+
+    STATE_CHANGED,
 
     IMU_DATA_CHANGED,
 
@@ -14,13 +14,16 @@ enum class EventType {
 
     VOLUME_CHANGED,
 
+    INIT_COLOR_CHANGED,
     COLOR_CHANGED,
 
-    DISPLAY_CLEAR_REQUESTED,
-    DISPLAY_TEXT_REQUESTED,
-    DISPLAY_PROGRESS_REQUESTED,
-    DISPLAY_ICON_REQUESTED,
-    DISPLAY_UI_REQUESTED,
+    GENERIC_BUTTON_PRESSED,
+    GENERIC_BUTTON_RELEASED,
+    GENERIC_BUTTON_CLICKED,
+    GENERIC_BUTTON_LONG_PRESSED,
+    GENERIC_BUTTON_DOUBLE_CLICKED,
+
+    DISPLAY_REQUEST_UPDATE,
 
     AUDIO_PLAY_TRACK,
     AUDIO_PAUSE,
@@ -31,7 +34,9 @@ enum class EventType {
 
     ANIMATION_REQUESTED, // maybe dont need this
 
+    RAW_ROTARY_ROTATION_CHANGED,
     ROTARY_ROTATION_CHANGED,
+
     ROTARY_BUTTON_PRESSED,
     ROTARY_BUTTON_LONG_PRESSED,
     ROTARY_BUTTON_DOUBLE_CLICKED,
@@ -42,6 +47,7 @@ enum class EventType {
     BLADE_EXTINGUISH,
     BLADE_BLASTER_REFLECT,
     BLADE_BLADE_LOCK,
+    BLADE_RAINBOW_ANIMATION,
 };
 
 enum class DataType {
@@ -54,7 +60,6 @@ enum class DataType {
     VECTOR3D,
     IMUDATA,
     JSON_OBJECT,
-    DISPLAY_UI_DATA,
 };
     
 struct IntData {
@@ -75,9 +80,9 @@ struct StringData {
 };
 
 struct ColorData {
-    int red;
-    int green;
-    int blue;
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
 };
 
 struct Vector3D {
@@ -89,8 +94,5 @@ struct Vector3D {
 struct IMUData {
     Vector3D accel;
     Vector3D gyro;
-};
-
-struct DisplayUIData {
-    std::vector<UIElement> elements;
+    Vector3D mag;
 };

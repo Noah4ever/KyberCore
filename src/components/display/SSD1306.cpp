@@ -40,15 +40,33 @@ void SSD1306::setup() {
     }
     pimpl_->display.clearDisplay();
     pimpl_->display.setTextColor(SSD1306_WHITE);
-    pimpl_->display.setTextSize(2);
+    pimpl_->display.setTextSize(1);
     pimpl_->display.setCursor(0, 0);
     pimpl_->display.display();
 
-    EventBus::getInstance().subscribe(this, EventType::DISPLAY_CLEAR_REQUESTED);
-    EventBus::getInstance().subscribe(this, EventType::DISPLAY_UI_REQUESTED);
 }
 
 void SSD1306::update() {}
+
+void SSD1306::drawRect(int x, int y, int width, int height) {
+    pimpl_->display.drawRect(x, y, width, height, SSD1306_WHITE);
+}
+
+void SSD1306::drawRect(int x, int y, int width, int height, int radius) {
+    pimpl_->display.drawRoundRect(x, y, width, height, radius, SSD1306_WHITE);
+}
+
+void SSD1306::drawFillRect(int x, int y, int width, int height) {
+    pimpl_->display.fillRect(x, y, width, height, SSD1306_WHITE);
+}
+
+void SSD1306::drawFillRect(int x, int y, int width, int height, int radius) {
+    pimpl_->display.fillRoundRect(x, y, width, height, radius, SSD1306_WHITE);
+}
+
+void SSD1306::drawFillRect(int x, int y, int width, int height, UIColor color) {
+    pimpl_->display.fillRoundRect(x, y, width, height, 0, static_cast<int>(color));
+}
 
 void SSD1306::clearDisplayInternal() {
     pimpl_->display.clearDisplay();
@@ -59,9 +77,9 @@ void SSD1306::drawIconInternal(int x, int y, const uint8_t *icon, int width, int
 }
 
 void SSD1306::drawProgressBarInternal(int x, int y, int width, int height, int progress) {
-    pimpl_->display.drawRect(x, y, width, height, SSD1306_WHITE);
+    pimpl_->display.drawRoundRect(x, y, width, height, 4, SSD1306_WHITE);
     int barWidth = (progress * (width - 2)) / 100;
-    pimpl_->display.fillRect(x + 1, y + 1, barWidth, height - 2, SSD1306_WHITE);
+    pimpl_->display.fillRoundRect(x, y + 1, barWidth, height - 2, 4, SSD1306_WHITE);
 }
 
 void SSD1306::drawValueInternal(int x, int y, int value) {

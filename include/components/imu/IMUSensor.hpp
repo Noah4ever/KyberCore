@@ -11,6 +11,7 @@ public:
     virtual Vector3D getOrientation() const = 0;       // Roll, Pitch, Yaw in degrees
     virtual Vector3D getAcceleration() const = 0;      // X, Y, Z in m/s²
     virtual Vector3D getGyroscope() const = 0;         // X, Y, Z in rad/s
+    virtual Vector3D getMagnetometer() { return Vector3D(); };      // X, Y, Z in uT (if applicable)
     
     // Configuration
     virtual void calibrate(const ArduinoJson::JsonObjectConst& config) = 0;

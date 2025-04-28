@@ -12,6 +12,7 @@ class IEventListener;
 // Interface for event listeners
 struct Event {
     Event(EventType type, DataType dataType) : type(type), dataType(dataType) {}
+    Event(EventType type) : type(type), dataType(DataType::NONE) {}
     ~Event() {}
     
     EventType type;
@@ -25,7 +26,6 @@ struct Event {
         Vector3D vector3DData;
         IMUData imuData;
         ArduinoJson::JsonVariant jsonData;
-        DisplayUIData displayUIData;
         // Add more data types as needed. EventType.hpp
     };
 };

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "states/SettingState.hpp"
-
+#include "components/display/IDisplay.hpp"
+#include "events/EventType.hpp"
+#include "ui/elements/ProgressBar.hpp"
 
 class BrightnessState : public SettingState
 {
@@ -18,7 +20,17 @@ private:
     constexpr static int MIN_BRIGHTNESS = 0;
     constexpr static int MAX_BRIGHTNESS = 255;
 
+    UIElement *defaultUI;
+    UIElement *menuUI;
+    ProgressBar *progressBar;
+
     int lerpBrightness(int a, int b, float t);
+    void publishBrightnessEvent()
+    {
+        Event brightnessEvent(EventType::BRIGHTNESS_CHANGED, DataType::INT);
+        brightnessEvent.intData.value = brightnessLevel;
+        EventBus::getInstance().publish(brightnessEvent);
+    }
 
 public:
     BrightnessState();
@@ -27,7 +39,10 @@ public:
     void handleButtonPress() override;
     void update() override;
     void resetState() override;
-    void updateDisplayData() override;
+
+    void updateDisplay(IDisplay *display) override;
+    UIElement *getDefaultUI() override;
+    UIElement *getMenuUI() override;
 
     // Static members for the brightness icon
     static const uint8_t icon_brightness[];

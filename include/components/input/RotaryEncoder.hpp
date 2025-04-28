@@ -19,13 +19,12 @@ private:
     unsigned long lastButtonTime;
     static constexpr unsigned long BUTTON_DEBOUNCE_MS = 50;
   
-    // New: click & long‑press detection
     unsigned long   pressTime       = 0;    // when button went LOW
     unsigned long   lastReleaseTime = 0;    // when button went HIGH
     uint8_t         clickCount      = 0;    // number of releases within window
   
-    static constexpr unsigned long LONG_PRESS_MS   = 800;  // hold threshold
-    static constexpr unsigned long DOUBLE_CLICK_MS = 200;  // max gap
+    static constexpr unsigned long LONG_PRESS_MS   = 700;  // hold threshold
+    static constexpr unsigned long DOUBLE_CLICK_MS = 300;  // max gap
 
 public:
     RotaryEncoder(const ArduinoJson::JsonObjectConst& config);

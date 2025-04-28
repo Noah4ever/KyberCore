@@ -46,63 +46,64 @@ void RotaryEncoder::readEncoder() {
     lastCLKState = currentCLKState;
 }
 
-
 void RotaryEncoder::readButton() {
     bool cur = digitalRead(swPin);
     unsigned long now = millis();
+    static bool longPressing = false; // Static to persist across calls
 
     // State change & debounce
     if (cur != lastButtonState && (now - lastButtonTime) >= BUTTON_DEBOUNCE_MS) {
         lastButtonTime = now;
+        lastButtonState = cur;
 
         if (cur == LOW) {
             // Button down
             pressTime = now;
             EventBus::getInstance().publish(
-              Event{EventType::ROTARY_BUTTON_PRESSED, DataType::NONE}
+                Event{EventType::ROTARY_BUTTON_PRESSED, DataType::NONE}
             );
-        } 
-        else {
+            longPressing = false; // Reset long pressing flag on new press
+        } else {
             // Button up
             unsigned long held = now - pressTime;
             auto& bus = EventBus::getInstance();
 
-            // Long‑press
-            if (held >= LONG_PRESS_MS) {
-                bus.publish(Event{EventType::ROTARY_BUTTON_LONG_PRESSED, DataType::NONE});
-                Serial.println("Button Long Pressed");
-            } 
-            else {
-                // Click: track for double‑click
+            if (!longPressing) { // Only process clicks if not a long press
+                // Click: track for double-click
                 clickCount++;
                 if (clickCount == 1) {
                     lastReleaseTime = now;
-                } 
-                else if (clickCount == 2 && (now - lastReleaseTime) <= DOUBLE_CLICK_MS) {
+                } else if (clickCount == 2 && (now - lastReleaseTime) <= DOUBLE_CLICK_MS) {
                     bus.publish(Event{EventType::ROTARY_BUTTON_DOUBLE_CLICKED, DataType::NONE});
                     clickCount = 0;  // reset
                     Serial.println("Button Double Clicked");
                 }
+                bus.publish(Event{EventType::ROTARY_BUTTON_RELEASED, DataType::NONE});
             }
-
-            // Always publish RELEASED
-            bus.publish(Event{EventType::ROTARY_BUTTON_RELEASED, DataType::NONE});
+            longPressing = false; // Reset flag on release
+        }
+    } else if (cur == LOW && (now - pressTime) >= LONG_PRESS_MS) {
+        // Long-press (while held down)
+        if (!longPressing) {
+            EventBus::getInstance().publish(
+                Event{EventType::ROTARY_BUTTON_LONG_PRESSED, DataType::NONE}
+            );
+            Serial.println("Button Long Pressed");
+            longPressing = true; // Set flag to indicate long press is active
         }
     }
 
-    // Single‑click timeout
-    if (clickCount == 1 && (now - lastReleaseTime) > DOUBLE_CLICK_MS) {
+    // Single-click timeout (only if not currently long pressing)
+    if (clickCount == 1 && (now - lastReleaseTime) > DOUBLE_CLICK_MS && !longPressing) {
         Serial.println("Button Clicked");
         EventBus::getInstance().publish(
-          Event{EventType::ROTARY_BUTTON_CLICKED, DataType::NONE}
+            Event{EventType::ROTARY_BUTTON_CLICKED, DataType::NONE}
         );
         clickCount = 0;
     }
-
-    lastButtonState = cur;
 }
 
-static ComponentRegistrar<ComponentType::ROTARY_ENCODER_GENERIC> registrar("generic",
+static ComponentRegistrar<ComponentType::ROTARY_ENCODER_GENERIC> registrar("rotary_encoder_generic",
     [] (const ArduinoJson::JsonObjectConst& config) -> IComponent* {
         return new RotaryEncoder(config);
     }

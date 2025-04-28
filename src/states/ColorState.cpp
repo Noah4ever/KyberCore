@@ -2,11 +2,28 @@
 #include "states/ColorState.hpp"
 #include "events/EventBus.hpp"
 #include "Arduino.h" // For Serial print
+#include "ui/elements/DefaultSettingView.hpp"
+#include "ui/elements/MenuList.hpp"
 #include <cmath> 
 
 ColorState::ColorState() : currentColor(DEFAULT_COLOR) 
 {
     NUM_POSSIBLE_COLORS = sizeof(POSSIBLE_COLORS) / sizeof(POSSIBLE_COLORS[0]);
+    Event colorEvent(EventType::INIT_COLOR_CHANGED, DataType::COLOR_VALUE);
+    colorEvent.colorData = currentColor;
+    EventBus::getInstance().publish(colorEvent);
+
+    defaultUI = new DefaultSettingView("Color");
+    colorInfoLabel = new TextLabel();
+    colorInfoLabel->x = 7;
+    colorInfoLabel->y = 20;
+    colorInfoLabel->width = 117;
+    colorInfoLabel->height = 10;
+    const String colorInfo = " R:" + String(currentColor.red) + ", G:" + String(currentColor.green) + ", B:" + String(currentColor.blue);
+    colorInfoLabel->setText(colorInfo.c_str());
+    defaultUI->addChild(colorInfoLabel);
+
+    menuUI = new MenuList();
 }
 
 void ColorState::handleRotation(int delta) 
@@ -34,6 +51,8 @@ void ColorState::handleRotation(int delta)
             targetColorIndex = currentColorIndex;
             animationProgress = 0.0f; // Start Animation
             isAnimating = true;
+            Event requestUI(EventType::DISPLAY_REQUEST_UPDATE, DataType::NONE);
+            EventBus::getInstance().publish(requestUI);
         }
     }
 }
@@ -53,14 +72,12 @@ void ColorState::update() {
             animationProgress = 1.0f;
             isAnimating = false;
             currentColor = POSSIBLE_COLORS[targetColorIndex]; // Set to target color
-            Event colorEvent(EventType::COLOR_CHANGED, DataType::COLOR_VALUE);
-            colorEvent.colorData = currentColor;
-            EventBus::getInstance().publish(colorEvent);
+            Event requestUI(EventType::DISPLAY_REQUEST_UPDATE, DataType::NONE);
+            EventBus::getInstance().publish(requestUI);
+            publishColorEvent();
         } else {
             currentColor = lerpColor(POSSIBLE_COLORS[startColorIndex], POSSIBLE_COLORS[targetColorIndex], animationProgress);
-            Event colorEvent(EventType::COLOR_CHANGED, DataType::COLOR_VALUE);
-            colorEvent.colorData = currentColor;
-            EventBus::getInstance().publish(colorEvent);
+            publishColorEvent();
         }
     }
 }
@@ -70,12 +87,29 @@ void ColorState::handleButtonPress()
     
 }
 
-void ColorState::updateDisplayData() 
+void ColorState::updateDisplay(IDisplay* display) 
 {
-    
+    if (display) {
+        const ColorData color = POSSIBLE_COLORS[targetColorIndex];
+        colorInfoLabel->clear(*display);
+        String colorInfo = "R:" + String(color.red) + ", G:" + String(color.green) + ", B:" + String(color.blue);
+        colorInfoLabel->setText(colorInfo.c_str());
+        colorInfoLabel->draw(*display);
+        display->displayInternal();
+    }
 }
 
-void ColorState::resetState() 
+UIElement *ColorState::getDefaultUI()
+{
+    return defaultUI;
+}
+
+UIElement *ColorState::getMenuUI()
+{
+    return menuUI;
+}
+
+void ColorState::resetState()
 {
     static size_t currentColorIndex = 0; 
     currentColor = DEFAULT_COLOR;

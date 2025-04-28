@@ -37,4 +37,10 @@ private:
 public:
     void setup() override;
     void update() override;
+
+    void drawRect(int x, int y, int width, int height) override;
+    void drawRect(int x, int y, int width, int height, int radius) override;
+    void drawFillRect(int x, int y, int width, int height) override;
+    void drawFillRect(int x, int y, int width, int height, int radius) override;
+    virtual void drawFillRect(int x, int y, int width, int height, UIColor color) override;
 };

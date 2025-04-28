@@ -17,6 +17,10 @@ SettingsStateMachine::~SettingsStateMachine() {
 void SettingsStateMachine::setup() {
     EventBus::getInstance().subscribe(this, EventType::ROTARY_BUTTON_CLICKED);
     EventBus::getInstance().subscribe(this, EventType::ROTARY_ROTATION_CHANGED);
+
+    
+    Event stateChangeEvent = {EventType::STATE_CHANGED, DataType::NONE};
+    EventBus::getInstance().publish(stateChangeEvent);
 }
 
 void SettingsStateMachine::addState(SettingState* state) {
@@ -32,9 +36,9 @@ void SettingsStateMachine::handleRotation(int delta) {
 void SettingsStateMachine::handleButtonPress() {
     if (!states.empty()) {
         currentStateIndex = (currentStateIndex + 1) % states.size();
-        Serial.print("Switching to state: ");
-        Serial.println(currentStateIndex);
-        states[currentStateIndex]->updateDisplayData();
+        Event stateChangeEvent = {EventType::STATE_CHANGED, DataType::NONE};
+        EventBus::getInstance().publish(stateChangeEvent);
+
     }
 }
 

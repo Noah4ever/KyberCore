@@ -3,38 +3,68 @@
 #include "events/EventBus.hpp"
 #include "events/EventType.hpp"
 #include "Arduino.h" // For Serial print
-#include <cmath> 
+#include "ui/elements/DefaultSettingView.hpp"
+#include "ui/elements/ProgressBar.hpp"
+#include "ui/elements/MenuList.hpp"
+#include <cmath>
 
-VolumeState::VolumeState() : volumeLevel(DEFAULT_VOLUME) {}
+VolumeState::VolumeState() : volumeLevel(DEFAULT_VOLUME) {
+    defaultUI = new DefaultSettingView("Volume");
+    progressBar = new ProgressBar(volumeLevel, MIN_VOLUME, MAX_VOLUME, 120, 10);
+    progressBar->setValue(volumeLevel);
+    progressBar->x = 4;
+    progressBar->y = 18;
+    defaultUI->addChild(progressBar);
 
-void VolumeState::handleRotation(int delta) {
+    menuUI = new MenuList();
+}
+
+void VolumeState::handleRotation(int delta)
+{
     volumeLevel += delta * ROTATION_STEP;
     volumeLevel = std::fmax(MIN_VOLUME, std::fmin(MAX_VOLUME, volumeLevel));
 
-    Event volumeEvent(EventType::VOLUME_CHANGED, DataType::INT);
-    volumeEvent.intData.value = volumeLevel;
-    EventBus::getInstance().publish(volumeEvent);
+    publishVolumeEvent();
 
-    updateDisplayData(); // Update display immediately on rotation
+    Event requestUI(EventType::DISPLAY_REQUEST_UPDATE, DataType::NONE);
+    EventBus::getInstance().publish(requestUI);
 
-    Event igniteEvent(EventType::BLADE_IGNITE, DataType::JSON_OBJECT);
-    igniteEvent.jsonData = ArduinoJson::JsonObject();
-    EventBus::getInstance().publish(igniteEvent);
+    Event rainbowEvent(EventType::BLADE_RAINBOW_ANIMATION, DataType::NONE);
+    EventBus::getInstance().publish(rainbowEvent);
 }
 
-void VolumeState::handleButtonPress() {
-    
+void VolumeState::handleButtonPress()
+{
 }
 
-void VolumeState::update() {
+void VolumeState::update()
+{
     // Update logic if needed
 }
 
-void VolumeState::updateDisplayData() {
-    // EventBus::getInstance().publish(ui);
+void VolumeState::updateDisplay(IDisplay *display)
+{
+    if (display)
+    {
+        progressBar->setValue(volumeLevel);
+        progressBar->clear(*display);
+        progressBar->draw(*display);
+        display->displayInternal();
+    }
 }
 
-void VolumeState::resetState() {
+UIElement *VolumeState::getDefaultUI()
+{
+    return defaultUI;
+}
+
+UIElement *VolumeState::getMenuUI()
+{
+    return menuUI;
+}
+
+void VolumeState::resetState()
+{
     volumeLevel = DEFAULT_VOLUME; // Reset to default value
 }
 

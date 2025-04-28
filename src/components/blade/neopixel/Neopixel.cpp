@@ -1,6 +1,8 @@
 #include "components/blade/neopixel/Neopixel.hpp"
 #include "core/ComponentRegistrar.hpp"
 #include <components/blade/neopixel/animations/NeopixelIgniteAnimation.hpp>
+#include <components/blade/neopixel/animations/NeopixelExtinguishAnimation.hpp>
+#include <components/blade/neopixel/animations/NeopixelRainbowAnimation.hpp>
 #include "events/EventBus.hpp"
 
 #include <Arduino.h>
@@ -14,6 +16,8 @@ Neopixel::Neopixel(const ArduinoJson::JsonObjectConst& config)
     leds = new CRGB[numLeds];
 
     addAnimation(EventType::BLADE_IGNITE, std::make_unique<NeopixelIgniteAnimation>());
+    addAnimation(EventType::BLADE_EXTINGUISH, std::make_unique<NeopixelExtinguishAnimation>());
+    addAnimation(EventType::BLADE_RAINBOW_ANIMATION, std::make_unique<NeopixelRainbowAnimation>());
 }
 
 Neopixel::~Neopixel()  {
@@ -29,61 +33,58 @@ void Neopixel::setup()  {
     FastLED.clear();
     FastLED.show();
 
+    EventBus::getInstance().subscribe(this, EventType::INIT_COLOR_CHANGED);
     EventBus::getInstance().subscribe(this, EventType::COLOR_CHANGED);
     EventBus::getInstance().subscribe(this, EventType::BRIGHTNESS_CHANGED);
 
     EventBus::getInstance().subscribe(this, EventType::BLADE_IGNITE);
     EventBus::getInstance().subscribe(this, EventType::BLADE_EXTINGUISH);
     EventBus::getInstance().subscribe(this, EventType::BLADE_BLASTER_REFLECT);
+    EventBus::getInstance().subscribe(this, EventType::BLADE_RAINBOW_ANIMATION);
 }
 
 void Neopixel::update()  {
 
     IBlade::updateAnimation();
-
-    // This is just test to see if the LEDs are working
-    // Animations should be handled in a separate class
-    static unsigned long lastUpdateTime = 0;
-    static int currentLedIndex = 0;
-    unsigned long currentTime = millis();
-    const unsigned long intervalMs = 50; // Time interval in milliseconds
-
-    if (currentTime - lastUpdateTime >= intervalMs) {
-        if (currentLedIndex < numLeds) {
-            leds[currentLedIndex] = CRGB::Red;
-            FastLED.show();
-            currentLedIndex++;
-            lastUpdateTime = currentTime;
-        } else {
-            // If all LEDs have been cycled through, you can define the behavior
-            // for the next "update" round here.
-            // For example, turn them all off again or restart the sequence.
-            // At this point, we simply let them shine blue.
-        }
-    }
 }
 
 int Neopixel::getNumLeds() const  {
     return numLeds;
 }
 
-void Neopixel::setColor(ColorData color)  {
+void Neopixel::setInitColor(ColorData color)  {
     this->color = color;
+    for (int i = 0; i < numLeds; i++) {
+        leds[i] = CRGB(color.red, color.green, color.blue);
+    }
+}
+
+void Neopixel::setColor(ColorData color, bool force)  {
+    this->color = color;
+    if(!bladeIsIgnited && !force) {
+        return;
+    }
     for (int i = 0; i < numLeds; i++) {
         leds[i] = CRGB(color.red, color.green, color.blue);
     }
     FastLED.show();
 }
 
-void Neopixel::setPixelColor(int pixel, CRGB color) {
+void Neopixel::setPixelColor(int pixel, CRGB color, bool force)  {
+    if(!bladeIsIgnited && !force) {
+        return;
+    }
     if (pixel >= 0 && pixel < numLeds) {
         leds[pixel] = color;
     }
 
 }
 
-void Neopixel::setBrightness(int brightness)  {
+void Neopixel::setBrightness(int brightness, bool force)  {
     this->brightness = brightness;
+    if(!bladeIsIgnited && !force) {
+        return;
+    }
     FastLED.setBrightness(brightness);
     FastLED.show();
 }

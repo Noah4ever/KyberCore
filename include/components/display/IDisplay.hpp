@@ -5,9 +5,16 @@
 #include "events/EventType.hpp"
 #include <string>
 #include <ArduinoJson.h>
-#include <ui/UIBuilder.hpp>
 
-class IDisplay : public IComponent, public IEventListener {
+enum class UIColor
+{
+    Black = 0,
+    White,
+    Inverse
+};
+
+class IDisplay : public IComponent, public IEventListener
+{
 public:
     virtual ~IDisplay() = default;
 
@@ -21,16 +28,21 @@ public:
     virtual void drawTextInternal(int x, int y, const std::string &text, uint8_t textSize) = 0;
     virtual void displayInternal() = 0;
 
+    virtual void drawRect(int x, int y, int width, int height) = 0;
+    virtual void drawRect(int x, int y, int width, int height, int radius) = 0;
+    virtual void drawFillRect(int x, int y, int width, int height) = 0;
+    virtual void drawFillRect(int x, int y, int width, int height, int radius) = 0;
+    virtual void drawFillRect(int x, int y, int width, int height, UIColor color) = 0;
+
     // Public interface
-    void clear() { clearDisplayInternal(); displayInternal(); }
-    void displayUIElements(const std::vector<UIElement>& elements);
+    void clear() { clearDisplayInternal(); }
 
     // IComponent interface
     virtual void setup() override {}
     virtual void update() override {}
 
     // IEventListener interface implementation
-    void handleEvent(const Event& event) override;
+    void handleEvent(const Event &event) override {}
 
 protected:
     IDisplay() {} // Protected constructor for inheritance

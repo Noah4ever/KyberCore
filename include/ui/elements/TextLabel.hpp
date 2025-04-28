@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UIElement.hpp"
-#include <String>
+#include <string>
 
 class TextLabel : public UIElement {
 private:

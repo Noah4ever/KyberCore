@@ -3,7 +3,7 @@
 #include "UIElement.hpp"
 #include "components/display/IDisplay.hpp"
 
-#include <String>
+#include <string>
 #include <functional>
 
 class Button : public UIElement {

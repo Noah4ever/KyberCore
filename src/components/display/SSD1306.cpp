@@ -22,16 +22,18 @@ struct SSD1306::Impl {
     int height;
     Adafruit_SSD1306 display;
 
-    Impl(int addr, int w, int h) : address(addr), width(w), height(h), display(w, h, &Wire, addr) {}
+    Impl(int addr, int w, int h, int reset) : address(addr), width(w), height(h), display(w, h, &Wire, reset) {}
 };
 
 SSD1306::SSD1306(const ArduinoJson::JsonObjectConst& config) : IDisplay(), pimpl_(std::make_unique<Impl>(
     0x3C,
     128,
-    32
+    32,
+    34
 )) {}
 
-SSD1306::~SSD1306() {}
+SSD1306::~SSD1306() {
+}
 
 void SSD1306::setup() {
     if (!pimpl_->display.begin(SSD1306_SWITCHCAPVCC, pimpl_->address)) {

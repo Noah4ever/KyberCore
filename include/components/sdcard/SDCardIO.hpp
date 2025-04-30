@@ -12,6 +12,12 @@ public:
     /**
      * @brief Initializes the SD card. Must be implemented in the concrete class.
      *
+     * @return true on success, false on failure.
+     */
+    virtual bool initializeSD() = 0;
+    /**
+     * @brief Initializes the SD card. Must be implemented in the concrete class.
+     *
      * @param csPin The chip select pin for the SD card module.
      * @return true on success, false on failure.
      */

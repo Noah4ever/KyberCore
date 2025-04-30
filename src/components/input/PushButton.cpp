@@ -28,7 +28,7 @@ void PushButton::readButton() {
             // Button down
             pressTime = now;
             EventBus::getInstance().publish(
-                Event{EventType::GENERIC_BUTTON_PRESSED, DataType::NONE}
+                Event{EventType::GENERIC_PUSH_BUTTON_PRESSED, DataType::NONE}
             );
         } else {
             // Button up
@@ -37,7 +37,7 @@ void PushButton::readButton() {
 
             // Long-press
             if (held >= LONG_PRESS_MS) {
-                bus.publish(Event{EventType::GENERIC_BUTTON_LONG_PRESSED, DataType::NONE});
+                bus.publish(Event{EventType::GENERIC_PUSH_BUTTON_LONG_PRESSED, DataType::NONE});
                 Serial.println("Button Long Pressed");
             } else {
                 // Click: track for double-click
@@ -45,14 +45,14 @@ void PushButton::readButton() {
                 if (clickCount == 1) {
                     lastReleaseTime = now;
                 } else if (clickCount == 2 && (now - lastReleaseTime) <= DOUBLE_CLICK_MS) {
-                    bus.publish(Event{EventType::GENERIC_BUTTON_DOUBLE_CLICKED, DataType::NONE});
+                    bus.publish(Event{EventType::GENERIC_PUSH_BUTTON_DOUBLE_CLICKED, DataType::NONE});
                     clickCount = 0;  // reset
                     Serial.println("Button Double Clicked");
                 }
             }
 
             // Always publish RELEASED
-            bus.publish(Event{EventType::GENERIC_BUTTON_RELEASED, DataType::NONE});
+            bus.publish(Event{EventType::GENERIC_PUSH_BUTTON_RELEASED, DataType::NONE});
         }
     }
 
@@ -60,7 +60,7 @@ void PushButton::readButton() {
     if (clickCount == 1 && (now - lastReleaseTime) > DOUBLE_CLICK_MS) {
         Serial.println("Button Clicked");
         EventBus::getInstance().publish(
-            Event{EventType::GENERIC_BUTTON_CLICKED, DataType::NONE}
+            Event{EventType::GENERIC_PUSH_BUTTON_CLICKED, DataType::NONE}
         );
         clickCount = 0;
     }

@@ -7,16 +7,24 @@
 #include <vector>
 #include <fstream>
 
-class ESP32SDCardIO : public SDCardIO {
+class 
+ESP32SDCardIO : public SDCardIO {
 public:
     ESP32SDCardIO(int csPin = SS) : chipSelectPin(csPin) {}
+
+    bool initializeSD() override {
+        if (!SD.begin(chipSelectPin)) {
+            Serial.println("SD Card mount failed");
+            return false;
+        }
+        return true;
+    }
 
     bool initializeSD(int csPin) override {
         if (!SD.begin(csPin)) {
             Serial.println("SD Card mount failed");
             return false;
         }
-        Serial.println("SD Card ready");
         return true;
     }
 
